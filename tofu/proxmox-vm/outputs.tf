@@ -1,12 +1,12 @@
 # Output VM information
 output "vm_ids" {
   description = "IDs of created VMs"
-  value       = proxmox_vm_qemu.ansible_vm[*].id
+  value       = proxmox_vm_qemu.vm[*].id
 }
 
 output "vm_names" {
   description = "Names of created VMs"
-  value       = proxmox_vm_qemu.ansible_vm[*].name
+  value       = proxmox_vm_qemu.vm[*].name
 }
 
 output "vm_ip_addresses" {
@@ -21,7 +21,7 @@ output "ansible_inventory" {
   description = "Ansible inventory format for created VMs"
   value = join("\n", [
     for i in range(var.vm_count) :
-    "${proxmox_vm_qemu.ansible_vm[i].name} ansible_host=${var.vm_ip_base}.${var.vm_ip_start + i} ansible_user=${var.ansible_user}"
+    "${proxmox_vm_qemu.vm[i].name} ansible_host=${var.vm_ip_base}.${var.vm_ip_start + i} ansible_user=${var.ansible_user}"
   ])
 }
 
@@ -36,14 +36,14 @@ output "ssh_connection_strings" {
 output "vm_details" {
   description = "Detailed information about created VMs"
   value = {
-    for i in range(var.vm_count) : proxmox_vm_qemu.ansible_vm[i].name => {
-      id         = proxmox_vm_qemu.ansible_vm[i].id
+    for i in range(var.vm_count) : proxmox_vm_qemu.vm[i].name => {
+      id         = proxmox_vm_qemu.vm[i].id
       ip_address = "${var.vm_ip_base}.${var.vm_ip_start + i}"
       cores      = var.vm_cores
       memory     = var.vm_memory
       disk_size  = var.vm_disk_size
       node       = var.proxmox_node
-      tags       = proxmox_vm_qemu.ansible_vm[i].tags
+      tags       = proxmox_vm_qemu.vm[i].tags
     }
   }
 }
@@ -54,7 +54,7 @@ output "ansible_hosts_file" {
 [proxmox_vms]
 ${join("\n", [
     for i in range(var.vm_count) :
-    "${proxmox_vm_qemu.ansible_vm[i].name} ansible_host=${var.vm_ip_base}.${var.vm_ip_start + i}"
+    "${proxmox_vm_qemu.vm[i].name} ansible_host=${var.vm_ip_base}.${var.vm_ip_start + i}"
   ])}
 
 [proxmox_vms:vars]
